@@ -13,4 +13,4 @@ add_executable(SLP-Course-project ${SOURCE_FILES} lib.c)
 
 add_library(ps SHARED ${SOURCE_FILES})
 
-target_link_libraries(SLP-Course-project psmoveapi psmoveapi_tracker)
+target_link_libraries(ps psmoveapi psmoveapi_tracker)
