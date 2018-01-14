@@ -6,6 +6,7 @@
 #include <psmove_tracker.h>
 #include <assert.h>
 #include "psmove.h"
+#include "frontend_jni_PSMoveManager.h"
 
 
 typedef struct point {
@@ -35,7 +36,7 @@ point get_point() {
 
 }
 
-int main() {
+int init() {
     count = psmove_count_connected();
 
     printf("### Found %d controllers.\n", count);
@@ -54,6 +55,7 @@ int main() {
     settings.exposure_mode = Exposure_LOW;
     settings.camera_mirror = PSMove_True;
     tracker = psmove_tracker_new_with_settings(&settings);
+
     if (!tracker)
     {
         fprintf(stderr, "Could not init PSMoveTracker.\n");
@@ -83,9 +85,7 @@ int main() {
             }
         }
     }
-    while (1) {
-        get_point();
-    }
+
     return 0;
 }
 

@@ -6,6 +6,7 @@ project(SLP-Course-project)
 set(CMAKE_C_STANDARD 11)
 
 include_directories(/home/yakov/Загрузки/psmoveapi-4.0.4/include)
+include_directories(/home/yakov/SPL-course-frontend/src)
 
 set(SOURCE_FILES main.c main.c main.h)
 add_executable(SLP-Course-project ${SOURCE_FILES} main.c main.h)
