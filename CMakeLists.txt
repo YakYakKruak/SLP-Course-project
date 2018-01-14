@@ -8,8 +8,8 @@ include_directories(/home/yakov/SPL-course-frontend/src)
 include_directories(/usr/lib/jvm/java-1.8.0-openjdk-amd64/include)
 include_directories(/usr/lib/jvm/java-1.8.0-openjdk-amd64/include/linux)
 
-set(SOURCE_FILES main.c main.c main.h)
-add_executable(SLP-Course-project ${SOURCE_FILES} main.c main.h)
+set(SOURCE_FILES lib.c lib.c)
+add_executable(SLP-Course-project ${SOURCE_FILES} lib.c)
 
 add_library(ps SHARED ${SOURCE_FILES})
 

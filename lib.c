@@ -8,25 +8,17 @@
 #include "psmove.h"
 #include "frontend_jni_PSMoveManager.h"
 
-
-JNIEXPORT jintArray JNICALL Java_frontend_jni_PSMoveManager_getPoint(JNIEnv * env, jobject obj) {
-   jintArray array;
-
-    return array;
-}
-
-
-typedef struct point {
-     float x;
-     float y;
-     float r;
-} point;
-
 int count;
 
 PSMove **controllers;
 
 PSMoveTracker* tracker;
+
+typedef struct point {
+    float x;
+    float y;
+    float r;
+} point;
 
 int init() {
     count = psmove_count_connected();
@@ -95,6 +87,26 @@ point get_point() {
     return p;
 
 }
+
+JNIEXPORT jint JNICALL Java_frontend_jni_PSMoveManager_init(JNIEnv * env, jobject obj) {
+    return  init();
+}
+
+
+JNIEXPORT jintArray JNICALL Java_frontend_jni_PSMoveManager_getPoint(JNIEnv * env, jobject obj) {
+    jintArray array = (*env)->NewIntArray(env,3);
+    if (!array) {
+        return NULL; /* out of memory error thrown */
+    }
+    jint arr[3];
+    point p = get_point();
+    arr[0] = (int)p.x;
+    arr[1] = (int)p.y;
+    arr[2] = (int)p.r;
+    (*env)->SetIntArrayRegion(env, array, 0, 3, arr);
+    return array;
+}
+
 
 
 
