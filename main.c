@@ -9,6 +9,13 @@
 #include "frontend_jni_PSMoveManager.h"
 
 
+JNIEXPORT jintArray JNICALL Java_frontend_jni_PSMoveManager_getPoint(JNIEnv * env, jobject obj) {
+   jintArray array;
+
+    return array;
+}
+
+
 typedef struct point {
      float x;
      float y;
@@ -20,21 +27,6 @@ int count;
 PSMove **controllers;
 
 PSMoveTracker* tracker;
-
-point get_point() {
-    psmove_tracker_update_image(tracker);
-    psmove_tracker_update(tracker, NULL);
-    psmove_tracker_annotate(tracker);
-    float x, y, r;
-    psmove_tracker_get_position(tracker, controllers[0], &x, &y, &r);
-    printf("x: %10.2f, y: %10.2f, r: %10.2f\n", x, y, r);
-    point p;
-    p.x = x;
-    p.y = y;
-    p.r = r;
-    return p;
-
-}
 
 int init() {
     count = psmove_count_connected();
@@ -87,6 +79,21 @@ int init() {
     }
 
     return 0;
+}
+
+point get_point() {
+    psmove_tracker_update_image(tracker);
+    psmove_tracker_update(tracker, NULL);
+    psmove_tracker_annotate(tracker);
+    float x, y, r;
+    psmove_tracker_get_position(tracker, controllers[0], &x, &y, &r);
+    printf("x: %10.2f, y: %10.2f, r: %10.2f\n", x, y, r);
+    point p;
+    p.x = x;
+    p.y = y;
+    p.r = r;
+    return p;
+
 }
 
 
