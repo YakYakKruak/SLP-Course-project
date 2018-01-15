@@ -30,6 +30,11 @@ int init() {
 
     controllers = (PSMove **)calloc(count, sizeof(PSMove *));
 
+    if (!psmove_init(PSMOVE_CURRENT_VERSION)) {
+        fprintf(stderr, "PS Move API init failed (wrong version?)\n");
+        exit(1);
+    }
+
     int result;
 
     fprintf(stderr, "Trying to init PSMoveTracker...");
@@ -79,11 +84,11 @@ point get_point() {
     psmove_tracker_annotate(tracker);
     float x, y, r;
     psmove_tracker_get_position(tracker, controllers[0], &x, &y, &r);
-    printf("x: %10.2f, y: %10.2f, r: %10.2f\n", x, y, r);
     point p;
     p.x = x;
     p.y = y;
-    p.r = r;
+    int res = psmove_poll(controllers[0]);
+    p.r = psmove_get_buttons(controllers[0]);
     return p;
 
 }
