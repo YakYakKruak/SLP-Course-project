@@ -6,7 +6,6 @@
 #include <psmove_tracker.h>
 #include <assert.h>
 #include "psmove.h"
-#include "frontend_jni_PSMoveManager.h"
 
 int count;
 
@@ -14,13 +13,35 @@ PSMove **controllers;
 
 PSMoveTracker* tracker;
 
+
 typedef struct point {
     float x;
     float y;
     float r;
+    int buttons;
 } point;
 
-int init() {
+point get_point() {
+    int res = psmove_poll(controllers[0]);
+    point p;
+
+    if (!res) {
+        return p;
+    }
+
+    float x, y, r;
+    psmove_tracker_get_position(tracker, controllers[0], &x, &y, &r);
+    p.x = x;
+    p.y = y;
+    p.r = r;
+    p.buttons = psmove_get_trigger(controllers[0]);
+    psmove_tracker_update_image(tracker);
+    psmove_tracker_update(tracker, NULL);
+
+    return p;
+}
+
+int main() {
     count = psmove_count_connected();
 
     printf("### Found %d controllers.\n", count);
@@ -29,91 +50,67 @@ int init() {
     }
 
     controllers = (PSMove **)calloc(count, sizeof(PSMove *));
-
-    if (!psmove_init(PSMOVE_CURRENT_VERSION)) {
-        fprintf(stderr, "PS Move API init failed (wrong version?)\n");
-        exit(1);
-    }
-
-    int result;
-
-    fprintf(stderr, "Trying to init PSMoveTracker...");
-    PSMoveTrackerSettings settings;
-    psmove_tracker_settings_set_default(&settings);
-    settings.color_mapping_max_age = 0;
-    settings.exposure_mode = Exposure_LOW;
-    settings.camera_mirror = PSMove_True;
-    tracker = psmove_tracker_new_with_settings(&settings);
+    tracker = psmove_tracker_new();
 
     if (!tracker)
     {
         fprintf(stderr, "Could not init PSMoveTracker.\n");
         return 1;
     }
+
     fprintf(stderr, "OK\n");
 
     for (int i=0; i < count; i++) {
         printf("Opening controller %d\n", i);
         controllers[i] = psmove_connect_by_id(i);
         assert(controllers[i] != NULL);
+    }
 
-        for (;;) {
-            printf("Calibrating controller %d...", i);
-            fflush(stdout);
-            result = psmove_tracker_enable(tracker, controllers[i]);
-
-            if (result == Tracker_CALIBRATED) {
-                enum PSMove_Bool auto_update_leds =
-                        psmove_tracker_get_auto_update_leds(tracker,
-                                                            controllers[i]);
-                printf("OK, auto_update_leds is %s\n",
-                       (auto_update_leds == PSMove_True)?"enabled":"disabled");
-                break;
-            } else {
+    for (int i=0; i<count; i++) {
+        while (psmove_tracker_enable(tracker, controllers[i]) != Tracker_CALIBRATED) {
                 printf("ERROR - retrying\n");
-            }
+
         }
     }
 
-    return 0;
-}
+    while (1) {
+        int again;
 
-point get_point() {
-    psmove_tracker_update_image(tracker);
-    psmove_tracker_update(tracker, NULL);
-    psmove_tracker_annotate(tracker);
-    float x, y, r;
-    psmove_tracker_get_position(tracker, controllers[0], &x, &y, &r);
-    point p;
-    p.x = x;
-    p.y = y;
-    int res = psmove_poll(controllers[0]);
-    p.r = psmove_get_buttons(controllers[0]);
-    return p;
+        do {
+            again = 0;
 
-}
+            for (int i=0; i<count; i++) {
 
-JNIEXPORT jint JNICALL Java_frontend_jni_PSMoveManager_init(JNIEnv * env, jobject obj) {
-    return  init();
-}
+                int res = psmove_poll(controllers[i]);
 
+                if (!res) {
+                    continue;
+                }
 
-JNIEXPORT jintArray JNICALL Java_frontend_jni_PSMoveManager_getPoint(JNIEnv * env, jobject obj) {
-    jintArray array = (*env)->NewIntArray(env,3);
-    if (!array) {
-        return NULL; /* out of memory error thrown */
+                again++;
+
+                float x, y, radius;
+                int butt;
+                psmove_tracker_get_position(tracker, controllers[i] , &x, &y, &radius);
+                butt = psmove_get_trigger(controllers[i]);
+                printf("x: %f , y: %f , r: %f , buttons : %d\n",x,y,radius,butt);
+
+            }
+        } while (again);
+
+        psmove_tracker_update_image(tracker);
+        psmove_tracker_update(tracker, NULL);
+
     }
-    jint arr[3];
-    point p = get_point();
-    arr[0] = (int)p.x;
-    arr[1] = (int)p.y;
-    arr[2] = (int)p.r;
-    (*env)->SetIntArrayRegion(env, array, 0, 3, arr);
-    return array;
+
+
+//    while (1) {
+//        point p = get_point();
+//        printf("x: %f , y: %f , r: %f , buttons : %d\n",p.x,p.y,p.r,p.buttons);
+//        printf("buttons : %d\n", p.buttons);
+//    }
+
 }
-
-
-
 
 int clear_all() {
     for (int i=0; i<count; i++) {
