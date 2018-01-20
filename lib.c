@@ -6,6 +6,7 @@
 #include <psmove_tracker.h>
 #include <assert.h>
 #include "psmove.h"
+#include "frontend_jni_PSMoveManager.h"
 
 int count;
 
@@ -21,27 +22,41 @@ typedef struct point {
     int buttons;
 } point;
 
+
 point get_point() {
-    int res = psmove_poll(controllers[0]);
+    float x, y, radius;
+    int butt;
+    int again;
     point p;
 
-    if (!res) {
-        return p;
-    }
+    do {
+        again = 0;
 
-    float x, y, r;
-    psmove_tracker_get_position(tracker, controllers[0], &x, &y, &r);
-    p.x = x;
-    p.y = y;
-    p.r = r;
-    p.buttons = psmove_get_trigger(controllers[0]);
+        for (int i=0; i<count; i++) {
+
+            int res = psmove_poll(controllers[i]);
+
+            if (!res) {
+                continue;
+            }
+
+            again++;
+
+            psmove_tracker_get_position(tracker, controllers[i] , &x, &y, &radius);
+            butt = psmove_get_trigger(controllers[i]);
+        }
+    } while (again);
+
     psmove_tracker_update_image(tracker);
     psmove_tracker_update(tracker, NULL);
-
+    p.x = x;
+    p.y = y;
+    p.r = radius;
+    p.buttons = butt;
     return p;
 }
 
-int main() {
+int init() {
     count = psmove_count_connected();
 
     printf("### Found %d controllers.\n", count);
@@ -72,44 +87,27 @@ int main() {
 
         }
     }
+}
 
-    while (1) {
-        int again;
 
-        do {
-            again = 0;
+JNIEXPORT jint JNICALL Java_frontend_jni_PSMoveManager_init(JNIEnv * env, jobject obj) {
+    return  init();
+}
 
-            for (int i=0; i<count; i++) {
 
-                int res = psmove_poll(controllers[i]);
-
-                if (!res) {
-                    continue;
-                }
-
-                again++;
-
-                float x, y, radius;
-                int butt;
-                psmove_tracker_get_position(tracker, controllers[i] , &x, &y, &radius);
-                butt = psmove_get_trigger(controllers[i]);
-                printf("x: %f , y: %f , r: %f , buttons : %d\n",x,y,radius,butt);
-
-            }
-        } while (again);
-
-        psmove_tracker_update_image(tracker);
-        psmove_tracker_update(tracker, NULL);
-
+JNIEXPORT jintArray JNICALL Java_frontend_jni_PSMoveManager_getPoint(JNIEnv * env, jobject obj) {
+    jintArray array = (*env)->NewIntArray(env,4);
+    if (!array) {
+        return NULL; /* out of memory error thrown */
     }
-
-
-//    while (1) {
-//        point p = get_point();
-//        printf("x: %f , y: %f , r: %f , buttons : %d\n",p.x,p.y,p.r,p.buttons);
-//        printf("buttons : %d\n", p.buttons);
-//    }
-
+    jint arr[4];
+    point p = get_point();
+    arr[0] = (int)p.x;
+    arr[1] = (int)p.y;
+    arr[2] = (int)p.r;
+    arr[3] = p.buttons;
+    (*env)->SetIntArrayRegion(env, array, 0, 4, arr);
+    return array;
 }
 
 int clear_all() {
