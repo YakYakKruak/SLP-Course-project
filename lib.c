@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <psmove_tracker.h>
-#include <assert.h>
 #include "frontend_jni_PSMoveManager.h"
 
 size_t count;
@@ -21,7 +20,7 @@ typedef struct point {
 } point;
 
 
-point get_point() {
+point get_point(void) {
     float x, y, radius;
     int click;
     int again;
@@ -30,7 +29,7 @@ point get_point() {
     do {
         again = 0;
 
-        for (int i=0; i<count; i++) {
+        for (size_t i=0; i<count; i++) {
 
             int res = psmove_poll(controllers[i]);
 
@@ -53,7 +52,7 @@ point get_point() {
     return p;
 }
 
-int init() {
+int init(void) {
     count = psmove_count_connected();
 
     printf("### Found %lu controllers.\n", count);
@@ -67,24 +66,25 @@ int init() {
         return 1;
     }
 
-    printf("OK\n");
+    puts("OK");
 
-    for (int i=0; i < count; i++) {
-        printf("Opening controller %d\n", i);
+    for (size_t i=0; i < count; i++) {
+        printf("Opening controller %lu\n", i);
         controllers[i] = psmove_connect_by_id(i);
-        assert(controllers[i] != NULL);
+        if(controllers[i] == NULL)
+            return 1;
     }
 
-    for (int i=0; i<count; i++) {
+    for (size_t i=0; i<count; i++) {
         while (psmove_tracker_enable(tracker, controllers[i]) != Tracker_CALIBRATED) {
-                printf("ERROR - retrying\n");
+                puts("ERROR - retrying");
         }
     }
 }
 
-int clear_all() {
-    for (int i=0; i<count; i++) {
-        printf("Closing controller %d\n" , i);
+int clear_all(void) {
+    for (size_t i=0; i<count; i++) {
+        printf("Closing controller %lu\n" , i);
         psmove_disconnect(controllers[i]);
     }
     psmove_tracker_free(tracker);
