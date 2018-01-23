@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <psmove_tracker.h>
-#include "frontend_jni_PSMoveManager.h"
 
 typedef struct state {
     float x;
@@ -20,6 +19,6 @@ state get_state(void);
 
 int init_move(void);
 
-int free_move(void);
+void free_move(void);
 
 #endif //SLP_COURSE_PROJECT_MOVE_H

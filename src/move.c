@@ -10,16 +10,16 @@ static PSMove **controllers;
 
 static PSMoveTracker* tracker;
 
-state get_point(void) {
+state get_state(void) {
     float x, y, radius;
     int click;
     int again;
-    state p;
+    state s;
 
     do {
         again = 0;
 
-        for (size_t i=0; i<count; i++) {
+        for (size_t i = 0; i < count; i++) {
 
             int res = psmove_poll(controllers[i]);
 
@@ -36,10 +36,10 @@ state get_point(void) {
 
     psmove_tracker_update_image(tracker);
     psmove_tracker_update(tracker, NULL);
-    p.x = x;
-    p.y = y;
-    p.buttons = click;
-    return p;
+    s.x = x;
+    s.y = y;
+    s.buttons = click;
+    return s;
 }
 
 int init_move(void) {
@@ -58,22 +58,22 @@ int init_move(void) {
 
     puts("OK");
 
-    for (size_t i=0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         printf("Opening controller %lu\n", i);
         controllers[i] = psmove_connect_by_id(i);
         if(controllers[i] == NULL)
             return 1;
     }
 
-    for (size_t i=0; i<count; i++) {
+    for (size_t i = 0; i < count; i++) {
         while (psmove_tracker_enable(tracker, controllers[i]) != Tracker_CALIBRATED) {
             puts("ERROR - retrying");
         }
     }
 }
 
-int free_move(void) {
-    for (size_t i=0; i<count; i++) {
+void free_move(void) {
+    for (size_t i = 0; i < count; i++) {
         printf("Closing controller %lu\n" , i);
         psmove_disconnect(controllers[i]);
     }

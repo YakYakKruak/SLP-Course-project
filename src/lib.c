@@ -2,6 +2,7 @@
 // Created by yakov on 26.11.17.
 //
 #include "move.h"
+#include "../frontend_jni_PSMoveManager.h"
 
 JNIEXPORT void JNICALL Java_frontend_jni_PSMoveManager_close0(JNIEnv * env, jobject obj) {
     free_move();
@@ -9,7 +10,9 @@ JNIEXPORT void JNICALL Java_frontend_jni_PSMoveManager_close0(JNIEnv * env, jobj
 
 
 JNIEXPORT jint JNICALL Java_frontend_jni_PSMoveManager_init0(JNIEnv * env, jobject obj) {
-    return  init_move();
+    if(init_move())
+        return 1;
+
 }
 
 JNIEXPORT jintArray JNICALL Java_frontend_jni_PSMoveManager_getPoint0(JNIEnv * env, jobject obj) {

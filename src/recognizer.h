@@ -1,0 +1,8 @@
+//
+// Created by yakov on 23.01.18.
+//
+
+#ifndef SLP_COURSE_PROJECT_RECOGNIZER_H
+#define SLP_COURSE_PROJECT_RECOGNIZER_H
+
+#endif //SLP_COURSE_PROJECT_RECOGNIZER_H
