@@ -2,22 +2,29 @@
 // Created by yakov on 26.11.17.
 //
 #include "move.h"
+#include "recognizer.h"
 #include "frontend_jni_JniHelper.h"
 
 
 JNIEXPORT jstring JNICALL Java_frontend_jni_JniHelper_recognize0(JNIEnv * env, jobject obj) {
-
+    char * string = recognize_text();
+    if(!string)
+        return NULL;
+    jstring res = (*env)->NewStringUTF(env, string);
+    return res;
 }
 
 JNIEXPORT void JNICALL Java_frontend_jni_JniHelper_close0(JNIEnv * env, jobject obj) {
     free_move();
+    free_recognizer();
 }
 
 
 JNIEXPORT jint JNICALL Java_frontend_jni_JniHelper_init0(JNIEnv * env, jobject obj) {
     if(init_move())
         return 1;
-
+    if(init_recognizer())
+        return 1;
 }
 
 JNIEXPORT jintArray JNICALL Java_frontend_jni_JniHelper_getPoint0(JNIEnv * env, jobject obj) {

@@ -5,7 +5,13 @@
 #ifndef SLP_COURSE_PROJECT_RECOGNIZER_H
 #define SLP_COURSE_PROJECT_RECOGNIZER_H
 
-#include <allheaders.h>
 #include <capi.h>
+#include <allheaders.h>
+
+int init_recognizer();
+
+char * recognize_text();
+
+void free_recognizer();
 
 #endif //SLP_COURSE_PROJECT_RECOGNIZER_H
