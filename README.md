@@ -1,6 +1,6 @@
 # SLP-Course-project
 PS Move painter with text recognition, this repository contains part on C.  
-Java frontent can be found at repository [SPL-Course-Frontend](https://github.com/YakYakKruak/SPL-course-frontend "SPL-Course-frontend").  
+Java frontent can be found at repository [SLP-Course-Frontend](https://github.com/YakYakKruak/SPL-course-frontend "SLP-Course-frontend").  
   
   To build it from sources, you need following:  
   
