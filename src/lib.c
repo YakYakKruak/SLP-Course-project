@@ -2,20 +2,25 @@
 // Created by yakov on 26.11.17.
 //
 #include "move.h"
-#include "../frontend_jni_PSMoveManager.h"
+#include "frontend_jni_JniHelper.h"
 
-JNIEXPORT void JNICALL Java_frontend_jni_PSMoveManager_close0(JNIEnv * env, jobject obj) {
+
+JNIEXPORT jstring JNICALL Java_frontend_jni_JniHelper_recognize0(JNIEnv * env, jobject obj) {
+
+}
+
+JNIEXPORT void JNICALL Java_frontend_jni_JniHelper_close0(JNIEnv * env, jobject obj) {
     free_move();
 }
 
 
-JNIEXPORT jint JNICALL Java_frontend_jni_PSMoveManager_init0(JNIEnv * env, jobject obj) {
+JNIEXPORT jint JNICALL Java_frontend_jni_JniHelper_init0(JNIEnv * env, jobject obj) {
     if(init_move())
         return 1;
 
 }
 
-JNIEXPORT jintArray JNICALL Java_frontend_jni_PSMoveManager_getPoint0(JNIEnv * env, jobject obj) {
+JNIEXPORT jintArray JNICALL Java_frontend_jni_JniHelper_getPoint0(JNIEnv * env, jobject obj) {
     jintArray array = (*env)->NewIntArray(env,3);
 
     if (!array)
