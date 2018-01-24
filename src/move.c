@@ -70,6 +70,7 @@ int init_move(void) {
             puts("ERROR - retrying");
         }
     }
+    return 0;
 }
 
 void free_move(void) {

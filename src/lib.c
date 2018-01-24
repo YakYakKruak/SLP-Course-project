@@ -25,6 +25,7 @@ JNIEXPORT jint JNICALL Java_frontend_jni_JniHelper_init0(JNIEnv * env, jobject o
         return 1;
     if(init_recognizer())
         return 1;
+    return 0;
 }
 
 JNIEXPORT jintArray JNICALL Java_frontend_jni_JniHelper_getPoint0(JNIEnv * env, jobject obj) {

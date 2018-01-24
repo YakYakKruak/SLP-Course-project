@@ -10,6 +10,7 @@ int init_recognizer() {
     tess = TessBaseAPICreate();
     if(TessBaseAPIInit3(tess, NULL, "eng") != 0)
         return 1;
+    return 0;
 }
 
 char * recognize_text() {
@@ -20,6 +21,7 @@ char * recognize_text() {
         return NULL;
 
     TessBaseAPISetImage2(tess, img);
+
     if(TessBaseAPIRecognize(tess, NULL) != 0)
         return NULL;
 
