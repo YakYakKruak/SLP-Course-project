@@ -6,14 +6,14 @@
 
 static TessBaseAPI *tess;
 
-int init_recognizer() {
+int init_recognizer(void) {
     tess = TessBaseAPICreate();
     if(TessBaseAPIInit3(tess, NULL, "eng") != 0)
         return 1;
     return 0;
 }
 
-char * recognize_text() {
+char * recognize_text(void) {
     PIX *img;
     char *text;
 
@@ -33,7 +33,7 @@ char * recognize_text() {
     return text;
 }
 
-void free_recognizer() {
+void free_recognizer(void) {
     TessBaseAPIEnd(tess);
     TessBaseAPIDelete(tess);
 }

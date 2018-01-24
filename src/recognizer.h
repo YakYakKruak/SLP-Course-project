@@ -8,10 +8,10 @@
 #include <capi.h>
 #include <allheaders.h>
 
-int init_recognizer();
+int init_recognizer(void);
 
-char * recognize_text();
+char * recognize_text(void);
 
-void free_recognizer();
+void free_recognizer(void);
 
 #endif //SLP_COURSE_PROJECT_RECOGNIZER_H
