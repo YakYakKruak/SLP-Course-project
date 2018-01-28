@@ -19,5 +19,5 @@ cd build
 cmake ..
 make
 ```
-After that you can just run the [Main]( "Main") class, or you can build an executable jar.  
+After that you can just run the [Main](https://github.com/YakYakKruak/SLP-Course-project/blob/master/src/java/frontend/Main.java "Main") class, or you can build an executable jar.  
 In case of any troubles mail to golovanev98@mail.ru
