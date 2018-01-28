@@ -4,24 +4,26 @@
 
 #include "move.h"
 
-static size_t count;
+struct global_state {
+    size_t count;
+    PSMove **controllers;
+    PSMoveTracker* tracker;
+};
 
-static PSMove **controllers;
+static struct global_state current_state;
 
-static PSMoveTracker* tracker;
-
-state get_state(void) {
+struct state get_state(void) {
     float x, y, radius;
     int click;
     int again;
-    state s;
+    struct state s;
 
     do {
         again = 0;
 
-        for (size_t i = 0; i < count; i++) {
+        for (size_t i = 0; i < current_state.count; i++) {
 
-            int res = psmove_poll(controllers[i]);
+            int res = psmove_poll(current_state.controllers[i]);
 
             if (!res) {
                 continue;
@@ -29,13 +31,13 @@ state get_state(void) {
 
             again++;
 
-            psmove_tracker_get_position(tracker, controllers[i] , &x, &y, &radius);
-            click = psmove_get_trigger(controllers[i]);
+            psmove_tracker_get_position(current_state.tracker, current_state.controllers[i] , &x, &y, &radius);
+            click = psmove_get_trigger(current_state.controllers[i]);
         }
     } while (again);
 
-    psmove_tracker_update_image(tracker);
-    psmove_tracker_update(tracker, NULL);
+    psmove_tracker_update_image(current_state.tracker);
+    psmove_tracker_update(current_state.tracker, NULL);
     s.x = x;
     s.y = y;
     s.buttons = click;
@@ -43,41 +45,41 @@ state get_state(void) {
 }
 
 int init_move(void) {
-    count = psmove_count_connected();
+    current_state.count = psmove_count_connected();
 
-    printf("### Found %lu controllers.\n", count);
+    fprintf(stderr,"### Found %lu controllers.\n", current_state.count);
 
-    controllers = (PSMove **)calloc(count, sizeof(PSMove *));
-    tracker = psmove_tracker_new();
+    current_state.controllers = (PSMove **)calloc(current_state.count, sizeof(PSMove *));
+    current_state.tracker = psmove_tracker_new();
 
-    if (!tracker)
+    if (!current_state.tracker)
     {
         fprintf(stderr, "Could not init PSMoveTracker.\n");
         return 1;
     }
 
-    puts("OK");
+    fputs("OK",stderr);
 
-    for (size_t i = 0; i < count; i++) {
-        printf("Opening controller %lu\n", i);
-        controllers[i] = psmove_connect_by_id(i);
-        if(controllers[i] == NULL)
+    for (size_t i = 0; i < current_state.count; i++) {
+        fprintf(stderr,"Opening controller %lu\n", i);
+        current_state.controllers[i] = psmove_connect_by_id(i);
+        if(current_state.controllers[i] == NULL)
             return 1;
     }
 
-    for (size_t i = 0; i < count; i++) {
-        while (psmove_tracker_enable(tracker, controllers[i]) != Tracker_CALIBRATED) {
-            puts("ERROR - retrying");
+    for (size_t i = 0; i < current_state.count; i++) {
+        while (psmove_tracker_enable(current_state.tracker, current_state.controllers[i]) != Tracker_CALIBRATED) {
+            fputs("ERROR - retrying",stderr);
         }
     }
     return 0;
 }
 
 void free_move(void) {
-    for (size_t i = 0; i < count; i++) {
-        printf("Closing controller %lu\n" , i);
-        psmove_disconnect(controllers[i]);
+    for (size_t i = 0; i < current_state.count; i++) {
+        fprintf(stderr,"Closing controller %lu\n" , i);
+        psmove_disconnect(current_state.controllers[i]);
     }
-    psmove_tracker_free(tracker);
-    free(controllers);
+    psmove_tracker_free(current_state.tracker);
+    free(current_state.controllers);
 }

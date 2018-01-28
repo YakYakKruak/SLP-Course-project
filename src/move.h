@@ -9,13 +9,13 @@
 #include <stdlib.h>
 #include <psmove_tracker.h>
 
-typedef struct state {
+struct state {
     float x;
     float y;
     int buttons;
-} state;
+};
 
-state get_state(void);
+struct state get_state(void);
 
 int init_move(void);
 
