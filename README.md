@@ -1,6 +1,6 @@
 # SLP-Course-project
-PS Move painter with text recognition, this repository contains part on C.  
-Java frontent can be found at repository [SLP-Course-Frontend](https://github.com/YakYakKruak/SPL-course-frontend "SLP-Course-frontend").  
+PS Move painter is an application that let you draw images using your playstation move controller. It also can save your masterpieces as PNG. Moreover, it can recognize text on pictures that you drawn!  
+The application consists of two parts - the JavaFX GUI and the shared library on C for processing controller motion.  
   
   To build it from sources, you need following:  
   
@@ -19,4 +19,5 @@ cd build
 cmake ..
 make
 ```
+After that you can just run the [Main]( "Main") class, or you can build an executable jar.  
 In case of any troubles mail to golovanev98@mail.ru

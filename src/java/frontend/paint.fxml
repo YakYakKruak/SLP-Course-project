@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="frontend.controller.PaintController"
+            prefHeight="500.0" prefWidth="640.0">
+    <top>
+        <VBox>
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="Save" onAction="#onSave" />
+                    <MenuItem text="Exit" onAction="#onExit" />
+                </Menu>
+            </MenuBar>
+            <ToolBar>
+                <TextField fx:id="brushSize" text="12" />
+                <ColorPicker fx:id="colorPicker"/>
+                <CheckBox fx:id="eraser" text="Eraser" />
+                <Button text="Clear" onAction="#clear"/>
+                <Button text="Recognize" onAction="#recognizeText"/>
+            </ToolBar>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane style="-fx-background-color: gray, aqua ; -fx-background-insets: 0, 20 ; -fx-padding: 20 ;">
+            <Canvas fx:id="canvas" width="640" height="480" />
+            <Canvas fx:id="canvasTrack" width="640" height="480" />
+        </StackPane>
+
+    </center>
+
+</BorderPane>

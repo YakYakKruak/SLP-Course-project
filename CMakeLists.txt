@@ -11,7 +11,7 @@ include_directories(/usr/include/tesseract)
 include_directories(/usr/include/leptonica)
 
 
-set(SOURCE_FILES src/lib.c src/move.c src/move.h src/recognizer.c src/recognizer.h)
+set(SOURCE_FILES src/c/lib.c src/c/move.c src/c/move.h src/c/recognizer.c src/c/recognizer.h)
 #add_executable(SLP-Course-project ${SOURCE_FILES} lib.c)
 
 add_library(ps SHARED ${SOURCE_FILES})
